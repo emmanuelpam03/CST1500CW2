@@ -2,7 +2,6 @@ import streamlit as st
 from app.data.tickets import get_all_tickets
 from google import genai
 
-
 class AITicketAnalyzerApp:
     def run(self):
         self._check_auth()

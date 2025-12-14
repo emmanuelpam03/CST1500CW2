@@ -9,7 +9,6 @@ from app.data.tickets import (
     delete_ticket,
 )
 
-
 class TicketsDashboardApp:
     def run(self):
         self._check_auth()

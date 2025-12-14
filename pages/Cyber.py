@@ -9,7 +9,6 @@ from app.data.incidents import (
     delete_incident,
 )
 
-
 class CyberDashboardApp:
     def run(self):
         self._check_auth()

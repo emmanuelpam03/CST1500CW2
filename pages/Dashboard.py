@@ -4,7 +4,6 @@ from app.data.users import get_user_by_username, list_users
 from app.data.datasets import get_all_datasets_metadata
 from app.services.user_service import register_user
 
-
 class DashboardApp:
     def run(self):
         self._check_auth()

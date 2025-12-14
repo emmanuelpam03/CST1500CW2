@@ -1,7 +1,6 @@
 import streamlit as st
 from app.services.user_service import register_user
 
-
 class RegisterApp:
     def run(self):
         self._redirect_if_logged_in()

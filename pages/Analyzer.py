@@ -3,7 +3,6 @@ from app.data.incidents import get_all_incidents
 from google import genai
 from google.genai import types
 
-
 class IncidentAnalyzerApp:
     def __init__(self):
         self.incidents = None
@@ -108,7 +107,6 @@ class IncidentAnalyzerApp:
             if chunk.text:
                 full_reply += chunk.text
                 container.markdown(full_reply)
-
 
 if __name__ == "__main__":
     app = IncidentAnalyzerApp()
