@@ -112,6 +112,5 @@ class AITicketAnalyzerApp:
             except Exception as e:
                 st.error(f"Error analyzing ticket: {str(e)}")
 
-
 if __name__ == "__main__":
     AITicketAnalyzerApp().run()

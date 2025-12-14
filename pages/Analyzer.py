@@ -111,3 +111,4 @@ class IncidentAnalyzerApp:
 if __name__ == "__main__":
     app = IncidentAnalyzerApp()
     app.run()
+    
