@@ -71,10 +71,10 @@ def ensure_default_admin():
             password_hash = hashed.decode('utf-8')
             cursor.execute(
                 "UPDATE users SET password_hash = ?, role = 'admin' WHERE username = ?",
-                (password_hash, default_username)
-            )
+                (password_hash, default_username) 
+            ) 
             conn.commit()
-            print(f"Updated existing user '{default_username}' to admin role")
+            print(f"Updated existing user '{default_username}' to admin role") 
     
     conn.close()
 
