@@ -11,7 +11,7 @@ def create_users_table(conn):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    conn.commit()
+    conn.commit() 
 
 def create_cyber_incidents_table(conn):
     cursor = conn.cursor()

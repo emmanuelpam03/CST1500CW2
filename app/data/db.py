@@ -14,4 +14,4 @@ def connect_database(db_path=DB_PATH):
     conn.row_factory = sqlite3.Row
     # Enable foreign keys
     conn.execute("PRAGMA foreign_keys = ON;")
-    return conn
+    return conn 

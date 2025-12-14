@@ -14,7 +14,7 @@ def register_user(username, password, role='user'):
     if get_user_by_username(username):
         return False, f"User '{username}' already exists."
 
-    # hash password
+    # hash password using bcrypt
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     password_hash = hashed.decode('utf-8')
 
