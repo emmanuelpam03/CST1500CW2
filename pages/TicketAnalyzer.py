@@ -73,7 +73,7 @@ class AITicketAnalyzerApp:
         with st.spinner("Analyzing ticket..."):
             try:
                 client = genai.Client(
-                    api_key="AIzaSyB3fmYyMw62cMfNKtDW1dcGKVZgkzAHsR4"
+                    api_key="AIzaSyCAUfQIEXpl2Q8njJwLv6aeEcnxp6sT1vs"
                 )
                 model = "gemini-2.5-flash"
 

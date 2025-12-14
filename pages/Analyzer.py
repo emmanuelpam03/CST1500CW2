@@ -9,7 +9,7 @@ class IncidentAnalyzerApp:
         self.selected_incident = None
         self.model = "gemini-2.5-flash"
         self.client = genai.Client(
-            api_key="AIzaSyB3fmYyMw62cMfNKtDW1dcGKVZgkzAHsR4"
+            api_key="AIzaSyCAUfQIEXpl2Q8njJwLv6aeEcnxp6sT1vs"
         )
 
     def run(self):
