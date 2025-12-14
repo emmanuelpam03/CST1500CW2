@@ -80,11 +80,11 @@ def update_ticket_status(ticket_id, new_status):
     conn.commit()
     count = cursor.rowcount
     conn.close()
-    return count
+    return count 
 
 def update_ticket(ticket_id, priority=None, status=None, category=None, subject=None, description=None, created_date=None, assigned_to=None, resolved_date=None):
-    """
-    Update a ticket. Only provided fields will be updated.
+    """ 
+    Update a ticket. Only provided fields will be updated
     """
     conn = connect_database()
     cursor = conn.cursor()
@@ -124,7 +124,7 @@ def update_ticket(ticket_id, priority=None, status=None, category=None, subject=
         conn.commit()
         count = cursor.rowcount
     else:
-        count = 0
+        count = 0 
     
     conn.close()
     return count

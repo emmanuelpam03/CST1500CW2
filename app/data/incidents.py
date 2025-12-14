@@ -53,10 +53,10 @@ def update_incident_status(incident_id, new_status):
     conn.commit()
     count = cursor.rowcount
     conn.close()
-    return count
+    return count 
 
 def update_incident(incident_id, date=None, incident_type=None, severity=None, status=None, description=None, reported_by=None):
-    """
+    """ 
     Update an incident. Only provided fields will be updated.
     """
     conn = connect_database()
@@ -94,7 +94,7 @@ def update_incident(incident_id, date=None, incident_type=None, severity=None, s
         count = 0
     
     conn.close()
-    return count
+    return count 
 
 def delete_incident(incident_id):
     conn = connect_database()
