@@ -97,6 +97,5 @@ class DashboardApp:
         else:
             st.info("User management is only available for administrators.")
 
-
 if __name__ == "__main__":
     DashboardApp().run()

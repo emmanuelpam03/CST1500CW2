@@ -264,6 +264,5 @@ class CyberDashboardApp:
         else:
             st.info("No incidents available to delete.")
 
-
 if __name__ == "__main__":
     CyberDashboardApp().run()

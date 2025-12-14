@@ -331,6 +331,5 @@ class TicketsDashboardApp:
         else:
             st.info("No tickets available to delete.")
 
-
 if __name__ == "__main__":
     TicketsDashboardApp().run()

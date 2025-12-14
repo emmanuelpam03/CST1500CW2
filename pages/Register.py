@@ -33,6 +33,5 @@ class RegisterApp:
             else:
                 st.error(message)
 
-
 if __name__ == "__main__":
     RegisterApp().run()
