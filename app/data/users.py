@@ -26,4 +26,4 @@ def list_users():
     cursor.execute("SELECT id, username, role, created_at FROM users ORDER BY id")
     rows = cursor.fetchall()
     conn.close()
-    return rows 
+    return rows
