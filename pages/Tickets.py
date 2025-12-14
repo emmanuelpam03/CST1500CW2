@@ -333,4 +333,3 @@ class TicketsDashboardApp:
 
 if __name__ == "__main__":
     TicketsDashboardApp().run()
-    

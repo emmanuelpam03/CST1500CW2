@@ -266,4 +266,3 @@ class CyberDashboardApp:
 
 if __name__ == "__main__":
     CyberDashboardApp().run()
-    
