@@ -6,9 +6,9 @@ def get_user_by_username(username):
     cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
     user = cursor.fetchone()
     conn.close()
-    return user
+    return user 
 
-def insert_user(username, password_hash, role='user'):
+def insert_user(username, password_hash, role='user'): 
     conn = connect_database()
     cursor = conn.cursor()
     cursor.execute(
@@ -26,4 +26,4 @@ def list_users():
     cursor.execute("SELECT id, username, role, created_at FROM users ORDER BY id")
     rows = cursor.fetchall()
     conn.close()
-    return rows
+    return rows 

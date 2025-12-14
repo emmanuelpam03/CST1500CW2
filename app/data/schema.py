@@ -1,6 +1,6 @@
 import sqlite3
 
-def create_users_table(conn):
+def create_users_table(conn): 
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -44,9 +44,9 @@ def create_datasets_metadata_table(conn):
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    conn.commit()
+    conn.commit() 
 
-def create_it_tickets_table(conn):
+def create_it_tickets_table(conn): 
     cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS it_tickets (
