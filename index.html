@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reworq — Today’s Priorities (Demo)</title>
+
+  <!-- Tailwind CDN for quick demo -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Tiny polish for the demo card */
+    .tile-bg {
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,250,0.95));
+    }
+    .badge {
+      font-size: 11px;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 font-sans antialiased p-8">
+
+  <div class="max-w-6xl mx-auto grid grid-cols-12 gap-6">
+    <!-- Left column: existing schedule placeholder -->
+    <div class="col-span-4 space-y-6">
+      <div class="rounded-2xl tile-bg p-6 shadow-sm border border-slate-100">
+        <h2 class="text-2xl font-semibold text-sky-700">Schedule</h2>
+        <p class="text-sm text-slate-500 mt-2">2:00 PM — Call with David</p>
+      </div>
+
+      <div class="rounded-2xl tile-bg p-6 shadow-sm border border-slate-100">
+        <h3 class="text-lg font-medium">Inbox</h3>
+        <p class="text-sm text-slate-500 mt-2">You have 8 unread messages.</p>
+      </div>
+    </div>
+
+    <!-- Center column: the new Today's Priorities tile (fits one grid cell) -->
+    <div class="col-span-4">
+      <div id="prioritiesTile" class="rounded-2xl tile-bg p-6 shadow-md border border-slate-100 h-full flex flex-col">
+        <div class="flex items-start justify-between">
+          <div>
+            <h3 class="text-2xl font-bold text-sky-700">Today's Priorities</h3>
+            <p class="text-sm text-slate-500 mt-1">3 focused items chosen from inbox, tasks, and calendar</p>
+          </div>
+          <button id="refreshBtn" class="ml-4 inline-flex items-center px-3 py-1.5 rounded-full bg-white border text-sm shadow-sm hover:bg-slate-50">
+            Refresh
+          </button>
+        </div>
+
+        <div id="items" class="mt-5 space-y-4 flex-1 overflow-auto">
+          <!-- JS will populate -->
+        </div>
+
+        <div class="mt-4 flex items-center justify-between">
+          <div class="text-xs text-slate-500">Updated <span id="updatedTime">just now</span></div>
+          <button id="viewAll" class="text-sm text-sky-600 hover:underline">View full plan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: tasks placeholder -->
+    <div class="col-span-4 space-y-6">
+      <div class="rounded-2xl tile-bg p-6 shadow-sm border border-slate-100">
+        <h3 class="text-lg font-medium">Tasks</h3>
+        <p class="text-sm text-slate-500 mt-2">6 open tasks. 2 due today.</p>
+      </div>
+
+      <div class="rounded-2xl tile-bg p-6 shadow-sm border border-slate-100">
+        <h3 class="text-lg font-medium">Inbox preview</h3>
+        <p class="text-sm text-slate-500 mt-2">Latest mention: Sara commented on PR #24</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Demo data: inbox, tasks, calendar
+    const inbox = [
+      { id: 'm1', source: 'Slack', subject: 'Design channel mention', ts: Date.now() - 1000 * 60 * 40, meta: 'You were asked to review home page mockup' },
+      { id: 'm2', source: 'Email', subject: 'Partnership follow-up', ts: Date.now() - 1000 * 60 * 60 * 5, meta: 'Partner needs answers by EOD' },
+      { id: 'm3', source: 'GitHub', subject: 'New comment on PR #24', ts: Date.now() - 1000 * 60 * 20, meta: 'Sara requested changes on your pull request' },
+    ];
+
+    const tasks = [
+      { id: 't1', title: 'Review PR #24', due: Date.now() + 1000 * 60 * 60 * 2, effort: 30, project: 'WebApp' },
+      { id: 't2', title: 'Finish onboarding slides', due: Date.now() + 1000 * 60 * 60 * 24, effort: 90, project: 'Sales' },
+      { id: 't3', title: 'Send budget ask to Finance', due: Date.now() - 1000 * 60 * 60 * 1, effort: 15, project: 'Ops' },
+    ];
+
+    const calendar = [
+      { id: 'c1', title: 'Design review', start: Date.now() + 1000 * 60 * 60 * 2, end: Date.now() + 1000 * 60 * 60 * 3 },
+      { id: 'c2', title: 'Daily standup', start: Date.now() + 1000 * 60 * 15, end: Date.now() + 1000 * 60 * 30 }
+    ];
+
+    // Core priority selector logic.
+    // Keep it tiny and deterministic for demo: merge signals and score items.
+    function pickPriorities({ inbox, tasks, calendar, now = Date.now() }) {
+      const candidates = [];
+
+      // 1) merge inbox -> tasks (if subject matches task title keywords)
+      inbox.forEach(m => {
+        // match PR or review words to tasks
+        const maybeMatch = tasks.find(t => m.subject.toLowerCase().includes(t.title.split(' ')[0].toLowerCase()) || m.subject.toLowerCase().includes('pr'));
+        const scoreBase = 30;
+        candidates.push({
+          id: m.id,
+          kind: 'message',
+          title: m.subject,
+          reason: m.meta,
+          source: m.source,
+          score: scoreBase + (maybeMatch ? 20 : 0),
+          ts: m.ts
+        });
+      });
+
+      // 2) tasks: give weight to overdue and due-soon
+      tasks.forEach(t => {
+        let score = 10;
+        const timeTo = t.due - now;
+        if (timeTo < 0) score += 40;        // overdue
+        else if (timeTo < 1000 * 60 * 60 * 3) score += 25; // due within 3h
+        else if (t.effort <= 30) score += 5; // quick wins
+        candidates.push({
+          id: t.id,
+          kind: 'task',
+          title: t.title,
+          reason: `Due ${new Date(t.due).toLocaleString()}`,
+          source: `Task • ${t.project}`,
+          score,
+          ts: t.due
+        });
+      });
+
+      // 3) calendar: meetings soon get high score
+      calendar.forEach(c => {
+        const timeTo = c.start - now;
+        let score = 5;
+        if (timeTo < 1000 * 60 * 30) score += 40; // within 30m
+        else if (timeTo < 1000 * 60 * 60 * 2) score += 20; // within 2h
+        candidates.push({
+          id: c.id,
+          kind: 'calendar',
+          title: c.title,
+          reason: `Starts ${Math.max(0, Math.round((c.start - now) / 60000))} minutes`,
+          source: 'Calendar',
+          score,
+          ts: c.start
+        });
+      });
+
+      // sort by score desc, then by recent timestamp
+      candidates.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return b.ts - a.ts;
+      });
+
+      // return top 3, but ensure variety (avoid three calendar items)
+      const picked = [];
+      const kinds = new Set();
+      for (const c of candidates) {
+        if (picked.length >= 3) break;
+        // prefer diversity: allow same kind if no alternatives
+        if (kinds.size < 2 || !kinds.has(c.kind)) {
+          picked.push(c);
+          kinds.add(c.kind);
+        } else if (picked.length < 3 && kinds.size >= 2) {
+          picked.push(c);
+        }
+      }
+      return picked;
+    }
+
+    // UI helpers
+    function el(tag, cls = '', text) {
+      const d = document.createElement(tag);
+      if (cls) d.className = cls;
+      if (text !== undefined) d.textContent = text;
+      return d;
+    }
+
+    function renderPriorities() {
+      const container = document.getElementById('items');
+      container.innerHTML = '';
+
+      const chosen = pickPriorities({ inbox, tasks, calendar });
+
+      if (!chosen.length) {
+        container.appendChild(el('div', 'text-sm text-slate-500', 'No priorities for now.'));
+        return;
+      }
+
+      chosen.forEach(item => {
+        const row = el('div', 'bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-start gap-3');
+
+        const left = el('div', 'flex-shrink-0');
+        const badge = el('div', 'w-10 h-10 rounded-full flex items-center justify-center bg-sky-100 text-sky-700 font-semibold', item.source[0] || '?');
+        left.appendChild(badge);
+
+        const body = el('div', 'flex-1');
+        const title = el('div', 'font-medium text-slate-800', item.title);
+        const reason = el('div', 'text-sm text-slate-500 mt-1', item.reason);
+        const meta = el('div', 'mt-2 flex items-center gap-2');
+
+        const sourceBadge = el('span', 'badge inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border', item.source);
+        const scorePill = el('span', 'badge inline-flex items-center px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border', `score ${item.score}`);
+
+        meta.appendChild(sourceBadge);
+        meta.appendChild(scorePill);
+
+        body.appendChild(title);
+        body.appendChild(reason);
+        body.appendChild(meta);
+
+        const actions = el('div', 'flex flex-col gap-2 items-end');
+        const openBtn = el('button', 'text-sm px-3 py-1 rounded-full border border-slate-200 hover:bg-slate-50', 'Open');
+        openBtn.onclick = () => {
+          alert('Open source: ' + item.source + '\n\nTitle: ' + item.title);
+        };
+
+        const doneBtn = el('button', 'text-sm px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100', 'Mark done');
+        doneBtn.onclick = () => {
+          markDone(item);
+        };
+
+        const snoozeBtn = el('button', 'text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-700', 'Snooze 30m');
+        snoozeBtn.onclick = () => snoozeItem(item);
+
+        actions.appendChild(openBtn);
+        actions.appendChild(doneBtn);
+        actions.appendChild(snoozeBtn);
+
+        row.appendChild(left);
+        row.appendChild(body);
+        row.appendChild(actions);
+
+        container.appendChild(row);
+      });
+
+      document.getElementById('updatedTime').textContent = new Date().toLocaleTimeString();
+    }
+
+    // Interactions
+    function markDone(item) {
+      // For demo: remove related item from data sources
+      if (item.kind === 'message') {
+        const idx = inbox.findIndex(x => x.id === item.id);
+        if (idx >= 0) inbox.splice(idx, 1);
+      } else if (item.kind === 'task') {
+        const idx = tasks.findIndex(x => x.id === item.id);
+        if (idx >= 0) tasks.splice(idx, 1);
+      } else if (item.kind === 'calendar') {
+        const idx = calendar.findIndex(x => x.id === item.id);
+        if (idx >= 0) calendar.splice(idx, 1);
+      }
+      renderPriorities();
+    }
+
+    function snoozeItem(item) {
+      // For demo: push the timestamp 30 minutes forward
+      const delta = 1000 * 60 * 30;
+      if (item.kind === 'task') {
+        const t = tasks.find(x => x.id === item.id);
+        if (t) t.due += delta;
+      } else if (item.kind === 'calendar') {
+        const c = calendar.find(x => x.id === item.id);
+        if (c) {
+          c.start += delta;
+          c.end += delta;
+        }
+      } else if (item.kind === 'message') {
+        const m = inbox.find(x => x.id === item.id);
+        if (m) m.ts += delta;
+      }
+      renderPriorities();
+    }
+
+    // Wire up refresh
+    document.getElementById('refreshBtn').addEventListener('click', () => renderPriorities());
+    document.getElementById('viewAll').addEventListener('click', () => {
+      alert('Open: full plan view (not implemented in this demo).');
+    });
+
+    // initial render
+    renderPriorities();
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<svg viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Principal Axis -->
+  <line x1="50" y1="200" x2="750" y2="200" stroke="black" stroke-width="1" stroke-dasharray="5,5"/>
+  <text x="760" y="205" font-size="14">Principal Axis</text>
+  
+  <!-- Convex Lens -->
+  <ellipse cx="400" cy="200" rx="15" ry="120" fill="lightblue" opacity="0.5" stroke="blue" stroke-width="2"/>
+  <text x="390" y="340" font-size="16" font-weight="bold">Convex Lens</text>
+  
+  <!-- Focal Points -->
+  <circle cx="280" cy="200" r="4" fill="red"/>
+  <text x="265" y="220" font-size="14" fill="red">F</text>
+  <line x1="280" y1="180" x2="280" y2="220" stroke="red" stroke-width="1"/>
+  
+  <circle cx="520" cy="200" r="4" fill="red"/>
+  <text x="525" y="220" font-size="14" fill="red">F</text>
+  <line x1="520" y1="180" x2="520" y2="220" stroke="red" stroke-width="1"/>
+  
+  <!-- 2F Points -->
+  <circle cx="160" cy="200" r="3" fill="darkred"/>
+  <text x="145" y="220" font-size="14" fill="darkred">2F</text>
+  
+  <circle cx="640" cy="200" r="3" fill="darkred"/>
+  <text x="645" y="220" font-size="14" fill="darkred">2F</text>
+  
+  <!-- Object -->
+  <line x1="160" y1="200" x2="160" y2="120" stroke="green" stroke-width="3"/>
+  <polygon points="160,120 155,135 165,135" fill="green"/>
+  <text x="140" y="110" font-size="14" fill="green" font-weight="bold">Object</text>
+  
+  <!-- Ray 1: Parallel to axis, through far focal point -->
+  <line x1="160" y1="120" x2="400" y2="120" stroke="orange" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="120" x2="520" y2="200" stroke="orange" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="520" y1="200" x2="640" y2="260" stroke="orange" stroke-width="2" stroke-dasharray="3,3"/>
+  
+  <!-- Ray 2: Through center, continues straight -->
+  <line x1="160" y1="120" x2="400" y2="200" stroke="purple" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="200" x2="640" y2="280" stroke="purple" stroke-width="2" stroke-dasharray="3,3"/>
+  
+  <!-- Ray 3: Through near focal point, exits parallel -->
+  <line x1="160" y1="120" x2="280" y2="200" stroke="blue" stroke-width="2"/>
+  <line x1="280" y1="200" x2="400" y2="250" stroke="blue" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="400" y1="250" x2="640" y2="250" stroke="blue" stroke-width="2" stroke-dasharray="3,3"/>
+  
+  <!-- Virtual Image (behind lens on object side) -->
+  <line x1="640" y1="200" x2="640" y2="290" stroke="red" stroke-width="3" stroke-dasharray="5,5"/>
+  <polygon points="640,290 635,275 645,275" fill="red" opacity="0.5"/>
+  <text x="590" y="305" font-size="14" fill="red" font-weight="bold">Virtual Image</text>
+  <text x="585" y="320" font-size="12" fill="red">(upright, enlarged)</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="black"/>
+    </marker>
+  </defs>
+  
+  <!-- Labels for rays -->
+  <text x="250" y="110" font-size="12" fill="orange">Ray 1: Parallel → through F</text>
+  <text x="220" y="165" font-size="12" fill="purple">Ray 2: Through center</text>
+  <text x="180" y="185" font-size="12" fill="blue">Ray 3: Through F → parallel</text>
+  
+  <!-- Title -->
+  <text x="250" y="30" font-size="20" font-weight="bold">Convex Lens - Object Between F and Lens</text>
+  <text x="200" y="55" font-size="14">(When object is closer than focal point, image is virtual, upright, and magnified)</text>
+</svg>
